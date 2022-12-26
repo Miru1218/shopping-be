@@ -12,10 +12,7 @@ import com.shoppingbe.shoppingbe.repository.ProductDao;
 import com.shoppingbe.shoppingbe.repository.ShippingAddressDao;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 
 @Service
@@ -33,6 +30,7 @@ public class OrderServiceImpl implements OrderService {
         this.orderDetailDao = orderDetailDao;
         this.productDao = productDao;
     }
+
     @Override
     public Order getOrderMainByOrderId(int orderId) throws Exception {
         Order order = new Order();
@@ -49,6 +47,21 @@ public class OrderServiceImpl implements OrderService {
         }
         return order;
     }
+
+    @Override
+    public Order saveOrderMainByOrder(Order order) throws Exception{
+        OrderMain orderMain = new OrderMain();
+        orderMain.setItemsPrice(order.getItemsPrice());
+        orderMain.setPaymentMethod(order.getPaymentMethod());
+        orderMain.setShippingPrice(order.getShippingPrice());
+        orderMain.setTaxPrice(order.getTaxPrice());
+        orderMain.setTotalPrice(order.getTotalPrice());
+        orderMain.setCreateTime(new Date());
+        orderMain = orderMainDao.save(orderMain);
+        order.setId(orderMain.getId());
+        return order;
+    }
+
     @Override
     public Order setupShippingAddress(Order order) throws Exception {
         if (order.getId() != null) {
@@ -58,6 +71,18 @@ public class OrderServiceImpl implements OrderService {
             order.setShippingAddress(shippingAddress);
         }
         return order;
+    }
+
+    @Override
+    public void saveShippingAddress(Order order)throws Exception{
+        ShippingAddress shippingAddress = new ShippingAddress();
+        shippingAddress.setOrderId(order.getId());
+        shippingAddress.setFullName(order.getShippingAddress().getFullName());
+        shippingAddress.setAddress(order.getShippingAddress().getAddress());
+        shippingAddress.setCity(order.getShippingAddress().getCity());
+        shippingAddress.setPostalCode(order.getShippingAddress().getPostalCode());
+        shippingAddress.setCountry(order.getShippingAddress().getCountry());
+        shippingAddressDao.save(shippingAddress);
     }
 
     @Override
@@ -81,5 +106,26 @@ public class OrderServiceImpl implements OrderService {
             order.setOrderItems(orderItems);
         }
         return order;
+    }
+
+    @Override
+    public void saveOrderDetails(Order order)throws Exception{
+        List<OrderItem> orderItems = order.getOrderItems();
+        for (OrderItem item : orderItems) {
+            Optional<Product> optional = productDao.findById(item.getId());
+            if (optional.isPresent()) {
+                Product product = optional.get();
+                OrderDetail orderDetail = new OrderDetail();
+                orderDetail.setOrderId(order.getId());
+                orderDetail.setProductId(item.getId());
+                orderDetail.setQty(item.getQuantity());
+                int price = product.getPrice();
+                orderDetail.setItemsPrice(price);
+                double tax = price * 0.15;
+                orderDetail.setTaxPrice(tax);
+                orderDetail.setTotalPrice(price + tax);
+                orderDetailDao.save(orderDetail);
+            }
+        }
     }
 }

@@ -7,7 +7,6 @@ import com.shoppingbe.shoppingbe.repository.UserDao;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +22,7 @@ import java.util.List;
 @RequestMapping("/user")
 @Tag(name = "UserController")
 public class UserController {
-    @Autowired
+    @Resource(name = "userDao")
     UserDao userDao;
     @Resource(name = "orderDetailDao")
     OrderDetailDao orderDetailDao;
