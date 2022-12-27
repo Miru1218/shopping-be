@@ -31,12 +31,12 @@ public class OrderController {
     @Resource(name = "orderFacade")
     OrderFacade orderFacade;
 
-//    透過 @Operation 標記，可以對 API 進行簡介
+    //    透過 @Operation 標記，可以對 API 進行簡介
     @Operation(summary = "下訂單")
     @PostMapping(value = "/order", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Order> order(@RequestBody Order order) throws Exception {
-        order =orderFacade.saveOrder(order);
+        order = orderFacade.saveOrder(order);
         return new ResponseEntity<>(order, HttpStatus.OK);
     }
 

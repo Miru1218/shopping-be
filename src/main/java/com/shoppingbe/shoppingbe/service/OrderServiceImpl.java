@@ -24,7 +24,7 @@ public class OrderServiceImpl implements OrderService {
     private ProductDao productDao;
 
     public OrderServiceImpl(OrderMainDao orderMainDao, ShippingAddressDao shippingAddressDao,
-                            OrderDetailDao orderDetailDao,ProductDao productDao) {
+                            OrderDetailDao orderDetailDao, ProductDao productDao) {
         this.orderMainDao = orderMainDao;
         this.shippingAddressDao = shippingAddressDao;
         this.orderDetailDao = orderDetailDao;
@@ -49,7 +49,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Order saveOrderMainByOrder(Order order) throws Exception{
+    public Order saveOrderMainByOrder(Order order) throws Exception {
         OrderMain orderMain = new OrderMain();
         orderMain.setItemsPrice(order.getItemsPrice());
         orderMain.setPaymentMethod(order.getPaymentMethod());
@@ -74,7 +74,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void saveShippingAddress(Order order)throws Exception{
+    public void saveShippingAddress(Order order) throws Exception {
         ShippingAddress shippingAddress = new ShippingAddress();
         shippingAddress.setOrderId(order.getId());
         shippingAddress.setFullName(order.getShippingAddress().getFullName());
@@ -109,7 +109,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void saveOrderDetails(Order order)throws Exception{
+    public void saveOrderDetails(Order order) throws Exception {
         List<OrderItem> orderItems = order.getOrderItems();
         for (OrderItem item : orderItems) {
             Optional<Product> optional = productDao.findById(item.getId());

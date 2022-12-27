@@ -2,11 +2,11 @@ package com.shoppingbe.shoppingbe.controller;
 
 import com.shoppingbe.shoppingbe.entity.OrderDetail;
 import com.shoppingbe.shoppingbe.entity.User;
+import com.shoppingbe.shoppingbe.facade.UserFacade;
 import com.shoppingbe.shoppingbe.repository.OrderDetailDao;
 import com.shoppingbe.shoppingbe.repository.UserDao;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.util.Comparator;
 import java.util.List;
 
@@ -26,6 +25,8 @@ public class UserController {
     UserDao userDao;
     @Resource(name = "orderDetailDao")
     OrderDetailDao orderDetailDao;
+    @Resource
+    UserFacade userFacade;
 
     @Operation(summary = "TEST")
     @GetMapping(value = "/test", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -33,11 +34,11 @@ public class UserController {
     public void test() {
         List<OrderDetail> orderDetails = orderDetailDao.findByOrderId(10);
         orderDetails.sort(Comparator.comparing(OrderDetail::getId));
-        for(OrderDetail o:orderDetails){
+        for (OrderDetail o : orderDetails) {
             System.out.println(o.getId());
         }
         orderDetails.sort(Comparator.comparing(OrderDetail::getId).reversed());
-        for(OrderDetail o:orderDetails){
+        for (OrderDetail o : orderDetails) {
             System.out.println(o.getId());
         }
     }
@@ -45,18 +46,10 @@ public class UserController {
     @Operation(summary = "註冊")
     @PostMapping(value = "/signup", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public void signup(@RequestBody String input, HttpServletRequest request) {
-        System.out.println(input);
-        JSONObject jsonObject = new JSONObject(input);
-        User user = new User();
-        user.setAccount(jsonObject.getString("account"));
-        user.setPassword(jsonObject.getString("password"));
-        user.setEmail(jsonObject.getString("email"));
-        user.setAddress(jsonObject.getString("address"));
-        user.setPhone(jsonObject.getInt("phone"));
-        userDao.save(user);
-        HttpSession session = request.getSession();
-        session.setAttribute("UserSession", user);
+    public ResponseEntity<User> signup(@RequestBody String input, HttpServletRequest request) throws Exception {
+        User user = userFacade.signup(input, request);
+        return new ResponseEntity<>(user, HttpStatus.OK);
+
     }
 
 //    @Operation(summary = "登入")
@@ -87,17 +80,9 @@ public class UserController {
     @Operation(summary = "登入")
     @PostMapping(value = "/signIn", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<?> signIn(@RequestBody String input, HttpServletRequest request) {
-        JSONObject inputObject = new JSONObject(input);
-        boolean loginPass = false;
-        User user = userDao.findByAccount(inputObject.getString("account"));
-        if (user != null && user.getPassword().equals(inputObject.getString("password"))) {
-            loginPass = true;
-            HttpSession session = request.getSession();
-            session.setAttribute("UserSession", user);
-            user.setPassword(null);
-        }
-        return new ResponseEntity<>(loginPass ? user : new User(), HttpStatus.OK);
+    public ResponseEntity<User> signIn(@RequestBody String input, HttpServletRequest request) throws Exception {
+        User user = userFacade.signIn(input, request);
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
 

@@ -6,13 +6,12 @@ import com.shoppingbe.shoppingbe.service.OrderService;
 import org.springframework.stereotype.Service;
 
 @Service
-public class OrderFacade{
+public class OrderFacade {
     private OrderService orderService;
 
     public OrderFacade(OrderService orderService) {
         this.orderService = orderService;
     }
-
 
 
     public Order getOrderDetail(int orderId) throws Exception {
@@ -22,7 +21,7 @@ public class OrderFacade{
         return order;
     }
 
-    public Order saveOrder(Order order)throws Exception{
+    public Order saveOrder(Order order) throws Exception {
         order = orderService.saveOrderMainByOrder(order);
         orderService.saveOrderDetails(order);
         orderService.saveShippingAddress(order);

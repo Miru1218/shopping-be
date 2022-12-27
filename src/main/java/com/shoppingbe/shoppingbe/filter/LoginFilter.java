@@ -3,7 +3,6 @@ package com.shoppingbe.shoppingbe.filter;
 import com.google.gson.Gson;
 import com.shoppingbe.shoppingbe.entity.User;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.*;
@@ -45,7 +44,7 @@ public class LoginFilter implements Filter {
         // 未登入
         else {
 //            if (allowUris.contains(uri)) {
-                chain.doFilter(request, response);
+            chain.doFilter(request, response);
 //            } else {
 //                res.setStatus(HttpStatus.UNAUTHORIZED.value());
 //            }
