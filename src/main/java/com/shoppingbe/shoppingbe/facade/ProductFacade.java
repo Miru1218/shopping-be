@@ -19,6 +19,16 @@ public class ProductFacade {
         return products;
     }
 
+    public List<String> getCategories() throws Exception {
+        List<String> categories = productService.getCategories();
+        return categories;
+    }
+
+    public List<Product> getSearchCategories(String categories) throws Exception {
+        List<Product> getSearchCategories = productService.getSearchCategories(categories);
+        return getSearchCategories;
+    }
+
     public List<Product> getAllSlug(String slug) throws Exception {
         List<Product> allSlug = productService.getAllSlug(slug);
         return allSlug;

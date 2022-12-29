@@ -7,4 +7,6 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 @RepositoryRestResource(exported = false)
 public interface ProductDao extends CrudRepository<Product, Integer> {
     Product findBySlug(String slug);
+
+    Product findByCategory(String category);
 }

@@ -31,6 +31,22 @@ public class ProductController {
         return new ResponseEntity<>(products, HttpStatus.OK);
     }
 
+    @Operation(summary = "categories")
+    @GetMapping(value = "/products/categories", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<List<String>> getCategories() throws Exception {
+        List<String> categories = productFacade.getCategories();
+        return new ResponseEntity<>(categories, HttpStatus.OK);
+    }
+
+    @Operation(summary = "All Products")
+    @GetMapping(value = "/products/category/{category}")
+    @ResponseBody
+    public ResponseEntity<List<Product>> getSearchCategories(@PathVariable("category") String category) throws Exception {
+        List<Product> searchCategories = productFacade.getSearchCategories(category);
+        return new ResponseEntity<>(searchCategories, HttpStatus.OK);
+    }
+
     @Operation(summary = "All slug")
     @GetMapping(value = "/products/{slug}")
     @ResponseBody
