@@ -11,7 +11,7 @@ public interface ProductService {
 
     List<String> getCategories() throws Exception;
 
-    List<Product> getSearchCategories(String categories) throws Exception;
-
     List<Product> getAllSlug(String slug) throws Exception;
+
+    List<Product> getProductsByCategory(String category) throws Exception;
 }

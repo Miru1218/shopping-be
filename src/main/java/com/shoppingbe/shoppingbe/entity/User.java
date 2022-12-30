@@ -21,7 +21,7 @@ public class User {
     @Column(name = "address")
     private String address;
     @Column(name = "phone")
-    private int phone;
+    private String phone;
     @Column(name = "created_at")
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
@@ -30,7 +30,7 @@ public class User {
     public User() {
     }
 
-    public User(int id, String account, String password, String email, String address, int phone, Date createdAt) {
+    public User(int id, String account, String password, String email, String address, String phone, Date createdAt) {
         this.id = id;
         this.account = account;
         this.password = password;
@@ -80,11 +80,11 @@ public class User {
         this.address = address;
     }
 
-    public int getPhone() {
+    public String getPhone() {
         return phone;
     }
 
-    public void setPhone(int phone) {
+    public void setPhone(String phone) {
         this.phone = phone;
     }
 

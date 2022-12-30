@@ -4,7 +4,9 @@ import com.shoppingbe.shoppingbe.entity.Product;
 import com.shoppingbe.shoppingbe.service.ProductService;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ProductFacade {
@@ -24,14 +26,28 @@ public class ProductFacade {
         return categories;
     }
 
-    public List<Product> getSearchCategories(String categories) throws Exception {
-        List<Product> getSearchCategories = productService.getSearchCategories(categories);
-        return getSearchCategories;
-    }
-
     public List<Product> getAllSlug(String slug) throws Exception {
         List<Product> allSlug = productService.getAllSlug(slug);
         return allSlug;
+    }
+
+    public Map<String, Object> getProductsByCategory(String category) throws Exception {
+        //        List<Product> productList;
+        //        if ("all".equalsIgnoreCase(category)) {
+        //            productList = productService.getAllProducts();
+        //        } else {
+        //            productList = productService.getProductsByCategory
+        //            (category);
+        //        }
+        List<Product> productList = "all".equalsIgnoreCase(category) ? productService.getAllProducts() :
+                productService.getProductsByCategory(category);
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("countProduct", productList.size());
+        result.put("page", "1");
+        result.put("pages", 1);
+        result.put("products", productList);
+        return result;
     }
 
 }

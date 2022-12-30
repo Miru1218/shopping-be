@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/product")
@@ -39,20 +40,20 @@ public class ProductController {
         return new ResponseEntity<>(categories, HttpStatus.OK);
     }
 
-    @Operation(summary = "All Products")
-    @GetMapping(value = "/products/category/{category}")
-    @ResponseBody
-    public ResponseEntity<List<Product>> getSearchCategories(@PathVariable("category") String category) throws Exception {
-        List<Product> searchCategories = productFacade.getSearchCategories(category);
-        return new ResponseEntity<>(searchCategories, HttpStatus.OK);
-    }
-
     @Operation(summary = "All slug")
     @GetMapping(value = "/products/{slug}")
     @ResponseBody
     public ResponseEntity<List<Product>> getSlug(@PathVariable("slug") String slug) throws Exception {
         List<Product> allSlug = productFacade.getAllSlug(slug);
         return new ResponseEntity<>(allSlug, HttpStatus.OK);
+    }
+
+    @Operation(summary = "Get Products By Category")
+    @GetMapping(value = "/products/search")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> getProductsByCategory(@RequestParam(value = "category") String category) throws Exception {
+        Map<String, Object> result = productFacade.getProductsByCategory(category);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }
 

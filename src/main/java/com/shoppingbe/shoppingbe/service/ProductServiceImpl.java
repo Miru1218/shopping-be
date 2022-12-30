@@ -24,6 +24,7 @@ public class ProductServiceImpl implements ProductService {
         productDao.findAll().forEach(allProducts::add);
         return allProducts;
     }
+
     @Override
     public List<String> getCategories() throws Exception {
         List<Product> products = new ArrayList<>();
@@ -33,19 +34,17 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<Product> getSearchCategories(String categories) throws Exception {
-        String categoriesDecode = URLDecoder.decode(categories, StandardCharsets.UTF_8.name());
-        List<Product> searchCategories = new ArrayList<>();
-        searchCategories.add(productDao.findByCategory(categoriesDecode));
-        return searchCategories;
-    }
-
-    @Override
     public List<Product> getAllSlug(String slug) throws Exception {
         String slugDecode = URLDecoder.decode(slug, StandardCharsets.UTF_8.name());
         List<Product> allSlug = new ArrayList<>();
         allSlug.add(productDao.findBySlug(slugDecode));
         return allSlug;
+    }
+
+    @Override
+    public List<Product> getProductsByCategory(String category) throws Exception {
+        List<Product> productList = productDao.findByCategory(category);
+        return productList;
     }
 
 }

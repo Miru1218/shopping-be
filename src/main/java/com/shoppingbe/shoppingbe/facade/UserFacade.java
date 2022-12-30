@@ -2,6 +2,7 @@ package com.shoppingbe.shoppingbe.facade;
 
 import com.shoppingbe.shoppingbe.entity.User;
 import com.shoppingbe.shoppingbe.service.UserService;
+import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,6 +22,11 @@ public class UserFacade {
 
     public User signIn(String input, HttpServletRequest request) throws Exception {
         User user = userService.signIn(input, request);
+        return user;
+    }
+
+    public User editProfile(JSONObject input, HttpServletRequest request) throws Exception {
+        User user = userService.editProfile(input, request);
         return user;
     }
 
