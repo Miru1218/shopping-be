@@ -23,4 +23,5 @@ public class Order {
     private String paidAt;
     private boolean isDelivered;
     private boolean isPaid;
+    private String userAccount;
 }

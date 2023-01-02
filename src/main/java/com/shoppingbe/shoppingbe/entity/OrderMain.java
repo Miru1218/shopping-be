@@ -28,8 +28,22 @@ public class OrderMain {
     private double taxPrice;
     @Column(name = "total_price")
     private double totalPrice;
+    @Column(name = "user_id")
+    private int userId;
     @Column(name = "created_at")
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     private Date createTime;
+    @Column(name = "delivered_at")
+    @CreationTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date deliveredAt;
+    @Column(name = "paid_at")
+    @CreationTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date paidAt;
+    @Column(name = "isDelivered")
+    private boolean isDelivered;
+    @Column(name = "isPaid")
+    private boolean isPaid;
 }

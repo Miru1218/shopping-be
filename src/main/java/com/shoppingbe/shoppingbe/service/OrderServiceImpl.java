@@ -1,17 +1,13 @@
 package com.shoppingbe.shoppingbe.service;
 
-import com.shoppingbe.shoppingbe.entity.OrderDetail;
-import com.shoppingbe.shoppingbe.entity.OrderMain;
-import com.shoppingbe.shoppingbe.entity.Product;
-import com.shoppingbe.shoppingbe.entity.ShippingAddress;
+import com.shoppingbe.shoppingbe.entity.*;
 import com.shoppingbe.shoppingbe.model.Order;
 import com.shoppingbe.shoppingbe.model.OrderItem;
-import com.shoppingbe.shoppingbe.repository.OrderDetailDao;
-import com.shoppingbe.shoppingbe.repository.OrderMainDao;
-import com.shoppingbe.shoppingbe.repository.ProductDao;
-import com.shoppingbe.shoppingbe.repository.ShippingAddressDao;
+import com.shoppingbe.shoppingbe.repository.*;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.*;
 
 
@@ -22,13 +18,15 @@ public class OrderServiceImpl implements OrderService {
     private OrderDetailDao orderDetailDao;
 
     private ProductDao productDao;
+    private final UserDao userDao;
 
     public OrderServiceImpl(OrderMainDao orderMainDao, ShippingAddressDao shippingAddressDao,
-                            OrderDetailDao orderDetailDao, ProductDao productDao) {
+                            OrderDetailDao orderDetailDao, ProductDao productDao, UserDao userDao) {
         this.orderMainDao = orderMainDao;
         this.shippingAddressDao = shippingAddressDao;
         this.orderDetailDao = orderDetailDao;
         this.productDao = productDao;
+        this.userDao = userDao;
     }
 
     @Override
@@ -43,13 +41,15 @@ public class OrderServiceImpl implements OrderService {
             order.setTaxPrice(orderMain.getTaxPrice());
             order.setTotalPrice(orderMain.getTotalPrice());
             order.setPaymentMethod(orderMain.getPaymentMethod());
-            order.setPaid(true);
+//            order.setPaid(true);
         }
         return order;
     }
 
     @Override
-    public Order saveOrderMainByOrder(Order order) throws Exception {
+    public Order saveOrderMainByOrder(Order order, HttpServletRequest rq) throws Exception {
+        HttpSession session = rq.getSession();
+        User user = (User)session.getAttribute("UserSession");
         OrderMain orderMain = new OrderMain();
         orderMain.setItemsPrice(order.getItemsPrice());
         orderMain.setPaymentMethod(order.getPaymentMethod());
@@ -57,6 +57,7 @@ public class OrderServiceImpl implements OrderService {
         orderMain.setTaxPrice(order.getTaxPrice());
         orderMain.setTotalPrice(order.getTotalPrice());
         orderMain.setCreateTime(new Date());
+        orderMain.setUserId(user.getId());
         orderMain = orderMainDao.save(orderMain);
         order.setId(orderMain.getId());
         return order;
@@ -67,7 +68,7 @@ public class OrderServiceImpl implements OrderService {
         if (order.getId() != null) {
             List<ShippingAddress> shippingAddressList = shippingAddressDao.findByOrderId(order.getId());
             ShippingAddress shippingAddress = shippingAddressList.get(0);
-            order.setDelivered(true);
+//            order.setDelivered(true);
             order.setShippingAddress(shippingAddress);
         }
         return order;
@@ -127,5 +128,11 @@ public class OrderServiceImpl implements OrderService {
                 orderDetailDao.save(orderDetail);
             }
         }
+    }
+
+    @Override
+    public List<OrderMain> findOrderMainsByUserId(int userId) throws Exception {
+        List<OrderMain> orderMainList = orderMainDao.findByUserId(userId);
+        return orderMainList;
     }
 }

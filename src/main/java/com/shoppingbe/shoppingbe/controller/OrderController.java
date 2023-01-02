@@ -1,6 +1,7 @@
 package com.shoppingbe.shoppingbe.controller;
 
 
+import com.shoppingbe.shoppingbe.entity.OrderMain;
 import com.shoppingbe.shoppingbe.facade.OrderFacade;
 import com.shoppingbe.shoppingbe.model.Order;
 import com.shoppingbe.shoppingbe.repository.OrderDetailDao;
@@ -15,6 +16,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @RestController
 @RequestMapping("/order")
@@ -33,20 +36,27 @@ public class OrderController {
 
     //    透過 @Operation 標記，可以對 API 進行簡介
     @Operation(summary = "下訂單")
-    @PostMapping(value = "/order", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/order", consumes = MediaType.APPLICATION_JSON_VALUE, produces =
+            MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Order> order(@RequestBody Order order) throws Exception {
-        order = orderFacade.saveOrder(order);
+    public ResponseEntity<Order> order(@RequestBody Order order, HttpServletRequest rq) throws Exception {
+        order = orderFacade.saveOrder(order,rq);
         return new ResponseEntity<>(order, HttpStatus.OK);
     }
 
+        @Operation(summary = "訂單內容")
+        @GetMapping(value = "/{orderId}")
+        @ResponseBody
+        public ResponseEntity<?> getOrderDetail(@PathVariable("orderId") Integer id) throws Exception {
+            Order order = orderFacade.getOrderDetail(id);
+            HttpStatus status = order.getId() == null ? HttpStatus.NOT_FOUND : HttpStatus.OK;
+            return new ResponseEntity<>(order, status);
+        }
     @Operation(summary = "訂單內容")
-    @GetMapping(value = "/{orderId}")
+    @GetMapping(value = "/mine")
     @ResponseBody
-    public ResponseEntity<?> getOrderDetail(@PathVariable("orderId") Integer id) throws Exception {
-        Order order = orderFacade.getOrderDetail(id);
-        HttpStatus status = order.getId() == null ? HttpStatus.NOT_FOUND : HttpStatus.OK;
-        return new ResponseEntity<>(order, status);
+    public ResponseEntity<List<OrderMain>> getHistoryOrders(HttpServletRequest rq) throws Exception {
+        List<OrderMain> orderList = orderFacade.getHistoryOrders(rq);
+        return new ResponseEntity<>(orderList, HttpStatus.OK);
     }
-
 }

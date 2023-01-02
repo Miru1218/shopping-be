@@ -3,8 +3,10 @@ package com.shoppingbe.shoppingbe.entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
+import java.util.Date;
 
 //@Entity的Bean是告訴Spring這是數據模型層的宣告
 @Entity
@@ -16,7 +18,7 @@ import javax.persistence.*;
 public class OrderDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    @Column name: 對應到Table的欄位中的欄位名稱
+    //    @Column name: 對應到Table的欄位中的欄位名稱
     @Column(name = "id")
     private int id;
     @Column(name = "order_id")
