@@ -9,7 +9,7 @@ public interface UserService {
 
     User signup(String input, HttpServletRequest request) throws Exception;
 
-    User signIn(String input, HttpServletRequest request) throws Exception;
+    User signIn(User user, HttpServletRequest request) throws Exception;
 
     User editProfile(JSONObject input, HttpServletRequest request) throws Exception;
 }

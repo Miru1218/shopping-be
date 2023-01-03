@@ -8,7 +8,7 @@ import java.util.List;
 
 @RepositoryRestResource(exported = false)
 public interface ProductDao extends CrudRepository<Product, Integer> {
-    Product findBySlug(String slug);
+    List<Product> findBySlug(String slug);
 
     List<Product> findByCategory(String category);
 }

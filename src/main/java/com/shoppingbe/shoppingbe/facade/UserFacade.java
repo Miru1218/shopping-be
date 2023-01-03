@@ -20,8 +20,8 @@ public class UserFacade {
         return user;
     }
 
-    public User signIn(String input, HttpServletRequest request) throws Exception {
-        User user = userService.signIn(input, request);
+    public User signIn(User user, HttpServletRequest request) throws Exception {
+        user = userService.signIn(user, request);
         return user;
     }
 

@@ -84,8 +84,8 @@ public class UserController {
     @PostMapping(value = "/signIn", consumes = MediaType.APPLICATION_JSON_VALUE, produces =
             MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<User> signIn(@RequestBody String input, HttpServletRequest request) throws Exception {
-        User user = userFacade.signIn(input, request);
+    public ResponseEntity<User> signIn(@RequestBody User user, HttpServletRequest request) throws Exception {
+        user = userFacade.signIn(user, request);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 

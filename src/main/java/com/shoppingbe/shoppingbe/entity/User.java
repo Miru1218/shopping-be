@@ -1,5 +1,7 @@
 package com.shoppingbe.shoppingbe.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import net.minidev.json.annotate.JsonIgnore;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
@@ -11,10 +13,12 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private int id;
     @Column(name = "account")
     private String account;
     @Column(name = "password")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
     @Column(name = "email")
     private String email;
@@ -26,6 +30,9 @@ public class User {
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
+
+    @Transient
+    private boolean loginPass;
 
     public User() {
     }
@@ -94,5 +101,13 @@ public class User {
 
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public boolean isLoginPass() {
+        return loginPass;
+    }
+
+    public void setLoginPass(boolean loginPass) {
+        this.loginPass = loginPass;
     }
 }

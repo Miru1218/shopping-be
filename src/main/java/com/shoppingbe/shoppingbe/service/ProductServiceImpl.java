@@ -29,15 +29,15 @@ public class ProductServiceImpl implements ProductService {
     public List<String> getCategories() throws Exception {
         List<Product> products = new ArrayList<>();
         productDao.findAll().forEach(products::add);
-        List<String> categories = products.stream().distinct().map(Product::getCategory).collect(Collectors.toList());
+        List<String> categories =
+                products.stream().distinct().map(Product::getCategory).sorted().collect(Collectors.toList());
         return categories;
     }
 
     @Override
     public List<Product> getAllSlug(String slug) throws Exception {
         String slugDecode = URLDecoder.decode(slug, StandardCharsets.UTF_8.name());
-        List<Product> allSlug = new ArrayList<>();
-        allSlug.add(productDao.findBySlug(slugDecode));
+        List<Product> allSlug = productDao.findBySlug(slugDecode);
         return allSlug;
     }
 

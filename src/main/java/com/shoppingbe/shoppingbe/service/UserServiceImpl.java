@@ -21,7 +21,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User signup(String input, HttpServletRequest request) throws Exception {
-        System.out.println(input);
         JSONObject jsonObject = new JSONObject(input);
         User user = new User();
         user.setAccount(jsonObject.getString("account"));
@@ -36,20 +35,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User signIn(String input, HttpServletRequest request) throws Exception {
+    public User signIn(User user, HttpServletRequest request) throws Exception {
         boolean loginPass = false;
-        JSONObject inputObject = new JSONObject(input);
-        User user = userDao.findByAccount(inputObject.getString("account"));
-        System.out.println(user==null);
-        System.out.println(user.getPassword());
-        System.out.println(inputObject.getString("password"));
-        if (user != null && user.getPassword().equals(inputObject.getString("password"))) {
+        User userFromDb = userDao.findByAccount(user.getAccount());
+        if (userFromDb != null && userFromDb.getPassword().equals(user.getPassword())) {
             loginPass = true;
             HttpSession session = request.getSession();
-            session.setAttribute("UserSession", user);
-            user.setPassword(null);
+            session.setAttribute("UserSession", userFromDb);
         }
-        return user;
+        userFromDb.setLoginPass(loginPass);
+        return userFromDb;
     }
     @Override
     public User editProfile(JSONObject input, HttpServletRequest request) throws Exception {
@@ -60,6 +55,8 @@ public class UserServiceImpl implements UserService {
             user.setAccount(input.getString("account"));
         if(Strings.isNotBlank(input.getString("email")))
             user.setEmail(input.getString("email"));
+        if(Strings.isNotBlank(input.getString("phone")))
+            user.setPhone(input.getString("phone"));
         if(Strings.isNotBlank(input.getString("password")))
             user.setPassword(input.getString("password"));
         userDao.save(user);

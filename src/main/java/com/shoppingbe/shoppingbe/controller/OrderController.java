@@ -52,7 +52,7 @@ public class OrderController {
             HttpStatus status = order.getId() == null ? HttpStatus.NOT_FOUND : HttpStatus.OK;
             return new ResponseEntity<>(order, status);
         }
-    @Operation(summary = "訂單內容")
+    @Operation(summary = "歷史訂單")
     @GetMapping(value = "/mine")
     @ResponseBody
     public ResponseEntity<List<OrderMain>> getHistoryOrders(HttpServletRequest rq) throws Exception {

@@ -56,7 +56,7 @@ public class OrderServiceImpl implements OrderService {
         orderMain.setShippingPrice(order.getShippingPrice());
         orderMain.setTaxPrice(order.getTaxPrice());
         orderMain.setTotalPrice(order.getTotalPrice());
-        orderMain.setCreateTime(new Date());
+        orderMain.setCreatedAt(new Date());
         orderMain.setUserId(user.getId());
         orderMain = orderMainDao.save(orderMain);
         order.setId(orderMain.getId());

@@ -33,7 +33,7 @@ public class OrderMain {
     @Column(name = "created_at")
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
-    private Date createTime;
+    private Date createdAt;
     @Column(name = "delivered_at")
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
