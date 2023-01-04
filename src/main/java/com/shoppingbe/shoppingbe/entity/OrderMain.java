@@ -7,6 +7,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "order_main")
@@ -20,7 +21,7 @@ public class OrderMain {
     private int id;
     @Column(name = "items_price")
     private int itemsPrice;
-    @Column(name = "payment_method")
+    @Column(name = "payment_method",columnDefinition = "text")
     private String paymentMethod;
     @Column(name = "shipping_price")
     private double shippingPrice;
@@ -46,4 +47,10 @@ public class OrderMain {
     private boolean isDelivered;
     @Column(name = "isPaid")
     private boolean isPaid;
+    @Transient
+    private List<Product> orderItems;
+    @Transient
+    private ShippingAddress shippingAddress;
+    @Transient
+    private String userAccount;
 }

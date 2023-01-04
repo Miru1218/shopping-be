@@ -1,8 +1,6 @@
 package com.shoppingbe.shoppingbe.service;
 
 import com.shoppingbe.shoppingbe.entity.*;
-import com.shoppingbe.shoppingbe.model.Order;
-import com.shoppingbe.shoppingbe.model.OrderItem;
 import com.shoppingbe.shoppingbe.repository.*;
 import org.springframework.stereotype.Service;
 
@@ -30,98 +28,75 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Order getOrderMainByOrderId(int orderId) throws Exception {
-        Order order = new Order();
+    public OrderMain getOrderMainByOrderId(int orderId) throws Exception {
+        OrderMain order = new OrderMain();
         Optional<OrderMain> orderMainOptional = orderMainDao.findById(orderId);
         if (orderMainOptional.isPresent()) {
-            OrderMain orderMain = orderMainOptional.get();
-            order.setId(orderId);
-            order.setItemsPrice(orderMain.getItemsPrice());
-            order.setShippingPrice(orderMain.getShippingPrice());
-            order.setTaxPrice(orderMain.getTaxPrice());
-            order.setTotalPrice(orderMain.getTotalPrice());
-            order.setPaymentMethod(orderMain.getPaymentMethod());
-//            order.setPaid(true);
+            order = orderMainOptional.get();
         }
         return order;
     }
 
     @Override
-    public Order saveOrderMainByOrder(Order order, HttpServletRequest rq) throws Exception {
+    public OrderMain saveOrderMain(OrderMain order, HttpServletRequest rq) throws Exception {
         HttpSession session = rq.getSession();
-        User user = (User)session.getAttribute("UserSession");
-        OrderMain orderMain = new OrderMain();
-        orderMain.setItemsPrice(order.getItemsPrice());
-        orderMain.setPaymentMethod(order.getPaymentMethod());
-        orderMain.setShippingPrice(order.getShippingPrice());
-        orderMain.setTaxPrice(order.getTaxPrice());
-        orderMain.setTotalPrice(order.getTotalPrice());
-        orderMain.setCreatedAt(new Date());
-        orderMain.setUserId(user.getId());
-        orderMain = orderMainDao.save(orderMain);
-        order.setId(orderMain.getId());
+        User user = (User) session.getAttribute("UserSession");
+        order.setCreatedAt(new Date());
+        order.setUserId(user.getId());
+        order = orderMainDao.save(order);
         return order;
     }
 
     @Override
-    public Order setupShippingAddress(Order order) throws Exception {
-        if (order.getId() != null) {
-            List<ShippingAddress> shippingAddressList = shippingAddressDao.findByOrderId(order.getId());
-            ShippingAddress shippingAddress = shippingAddressList.get(0);
-//            order.setDelivered(true);
-            order.setShippingAddress(shippingAddress);
-        }
+    public OrderMain setupShippingAddress(OrderMain order) throws Exception {
+        List<ShippingAddress> shippingAddressList = shippingAddressDao.findByOrderId(order.getId());
+        ShippingAddress shippingAddress = shippingAddressList.get(0);
+        //            order.setDelivered(true);
+        order.setShippingAddress(shippingAddress);
         return order;
     }
 
     @Override
-    public void saveShippingAddress(Order order) throws Exception {
-        ShippingAddress shippingAddress = new ShippingAddress();
+    public void saveShippingAddress(OrderMain order) throws Exception {
+        ShippingAddress shippingAddress = order.getShippingAddress();
         shippingAddress.setOrderId(order.getId());
-        shippingAddress.setFullName(order.getShippingAddress().getFullName());
-        shippingAddress.setAddress(order.getShippingAddress().getAddress());
-        shippingAddress.setCity(order.getShippingAddress().getCity());
-        shippingAddress.setPostalCode(order.getShippingAddress().getPostalCode());
-        shippingAddress.setCountry(order.getShippingAddress().getCountry());
         shippingAddressDao.save(shippingAddress);
     }
 
     @Override
-    public Order setupOrderItems(Order order) throws Exception {
-        if (order.getId() != null) {
-            List<OrderDetail> orderDetails = orderDetailDao.findByOrderId(order.getId());
-            orderDetails.sort(Comparator.comparing(OrderDetail::getId).reversed());
-            List<OrderItem> orderItems = new ArrayList<>();
-            for (OrderDetail orderDetail : orderDetails) {
-                OrderItem orderItem = new OrderItem();
-                orderItem.setId(orderDetail.getProductId());
-                Optional<Product> productOptional = productDao.findById(orderDetail.getProductId());
-                Product product = productOptional.get();
-                orderItem.setName(product.getName());
-                orderItem.setSlug(product.getSlug());
-                orderItem.setImage(product.getImage());
-                orderItem.setPrice(orderDetail.getItemsPrice());
-                orderItem.setQuantity(orderDetail.getQty());
-                orderItems.add(orderItem);
-            }
-            order.setOrderItems(orderItems);
+    public OrderMain setupOrderItems(OrderMain order) throws Exception {
+        List<OrderDetail> orderDetails = orderDetailDao.findByOrderId(order.getId());
+        orderDetails.sort(Comparator.comparing(OrderDetail::getId).reversed());
+        List<Product> orderItems = new ArrayList<>();
+        for (OrderDetail orderDetail : orderDetails) {
+            Product orderItem = new Product();
+            orderItem.setId(orderDetail.getProductId());
+            Optional<Product> productOptional = productDao.findById(orderDetail.getProductId());
+            Product product = productOptional.get();
+            orderItem.setName(product.getName());
+            orderItem.setSlug(product.getSlug());
+            orderItem.setImage(product.getImage());
+            orderItem.setPrice(orderDetail.getPrice());
+            orderItem.setQuantity(orderDetail.getQty());
+            orderItems.add(orderItem);
         }
+        order.setOrderItems(orderItems);
         return order;
     }
 
     @Override
-    public void saveOrderDetails(Order order) throws Exception {
-        List<OrderItem> orderItems = order.getOrderItems();
-        for (OrderItem item : orderItems) {
+    public void saveOrderDetails(OrderMain order) throws Exception {
+        List<Product> orderItems = order.getOrderItems();
+        for (Product item : orderItems) {
             Optional<Product> optional = productDao.findById(item.getId());
             if (optional.isPresent()) {
                 Product product = optional.get();
                 OrderDetail orderDetail = new OrderDetail();
                 orderDetail.setOrderId(order.getId());
-                orderDetail.setProductId(item.getId());
+                orderDetail.setProductId(product.getId());
                 orderDetail.setQty(item.getQuantity());
                 int price = product.getPrice();
-                orderDetail.setItemsPrice(price);
+                orderDetail.setPrice(price);
                 double tax = price * 0.15;
                 orderDetail.setTaxPrice(tax);
                 orderDetail.setTotalPrice(price + tax);

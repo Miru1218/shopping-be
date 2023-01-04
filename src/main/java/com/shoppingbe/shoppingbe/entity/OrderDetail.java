@@ -3,10 +3,8 @@ package com.shoppingbe.shoppingbe.entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
-import java.util.Date;
 
 //@Entity的Bean是告訴Spring這是數據模型層的宣告
 @Entity
@@ -28,7 +26,7 @@ public class OrderDetail {
     @Column(name = "qty")
     private int qty;
     @Column(name = "items_price")
-    private int itemsPrice;
+    private int price;
     @Column(name = "tax_price")
     private double taxPrice;
     @Column(name = "total_price")

@@ -32,10 +32,10 @@ public class Product {
     private String brand;
     @Column(name = "rating")
     private double rating;
-
     @Column(name = "num_reviews")
     private int numReviews;
     @Column(name = "description")
     private String description;
-
+    @Transient
+    private int quantity;
 }

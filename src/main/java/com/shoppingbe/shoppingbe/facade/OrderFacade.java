@@ -3,9 +3,7 @@ package com.shoppingbe.shoppingbe.facade;
 import com.google.gson.Gson;
 import com.shoppingbe.shoppingbe.entity.OrderMain;
 import com.shoppingbe.shoppingbe.entity.User;
-import com.shoppingbe.shoppingbe.model.Order;
 import com.shoppingbe.shoppingbe.service.OrderService;
-import org.hibernate.Session;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,15 +19,17 @@ public class OrderFacade {
     }
 
 
-    public Order getOrderDetail(int orderId) throws Exception {
-        Order order = orderService.getOrderMainByOrderId(orderId);
-        orderService.setupShippingAddress(order);
-        orderService.setupOrderItems(order);
+    public OrderMain getOrderDetail(int orderId) throws Exception {
+        OrderMain order = orderService.getOrderMainByOrderId(orderId);
+        if(orderId== order.getId()) {
+            orderService.setupShippingAddress(order);
+            orderService.setupOrderItems(order);
+        }
         return order;
     }
 
-    public Order saveOrder(Order order, HttpServletRequest rq) throws Exception {
-        order = orderService.saveOrderMainByOrder(order,rq);
+    public OrderMain saveOrder(OrderMain order, HttpServletRequest rq) throws Exception {
+        order = orderService.saveOrderMain(order,rq);
         orderService.saveOrderDetails(order);
         orderService.saveShippingAddress(order);
         System.out.println("測試資料    " + new Gson().toJson(order));

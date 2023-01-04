@@ -3,7 +3,6 @@ package com.shoppingbe.shoppingbe.controller;
 
 import com.shoppingbe.shoppingbe.entity.OrderMain;
 import com.shoppingbe.shoppingbe.facade.OrderFacade;
-import com.shoppingbe.shoppingbe.model.Order;
 import com.shoppingbe.shoppingbe.repository.OrderDetailDao;
 import com.shoppingbe.shoppingbe.repository.OrderMainDao;
 import com.shoppingbe.shoppingbe.repository.ProductDao;
@@ -39,19 +38,20 @@ public class OrderController {
     @PostMapping(value = "/order", consumes = MediaType.APPLICATION_JSON_VALUE, produces =
             MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Order> order(@RequestBody Order order, HttpServletRequest rq) throws Exception {
-        order = orderFacade.saveOrder(order,rq);
+    public ResponseEntity<OrderMain> order(@RequestBody OrderMain order, HttpServletRequest rq) throws Exception {
+        order = orderFacade.saveOrder(order, rq);
         return new ResponseEntity<>(order, HttpStatus.OK);
     }
 
-        @Operation(summary = "訂單內容")
-        @GetMapping(value = "/{orderId}")
-        @ResponseBody
-        public ResponseEntity<?> getOrderDetail(@PathVariable("orderId") Integer id) throws Exception {
-            Order order = orderFacade.getOrderDetail(id);
-            HttpStatus status = order.getId() == null ? HttpStatus.NOT_FOUND : HttpStatus.OK;
-            return new ResponseEntity<>(order, status);
-        }
+    @Operation(summary = "訂單內容")
+    @GetMapping(value = "/{orderId}")
+    @ResponseBody
+    public ResponseEntity<OrderMain> getOrderDetail(@PathVariable("orderId") Integer id) throws Exception {
+        OrderMain order = orderFacade.getOrderDetail(id);
+        HttpStatus status = id != order.getId() ? HttpStatus.NOT_FOUND : HttpStatus.OK;
+        return new ResponseEntity<>(order, status);
+    }
+
     @Operation(summary = "歷史訂單")
     @GetMapping(value = "/mine")
     @ResponseBody
