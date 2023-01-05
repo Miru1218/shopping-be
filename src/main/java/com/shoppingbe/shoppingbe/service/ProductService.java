@@ -1,8 +1,10 @@
 package com.shoppingbe.shoppingbe.service;
 
 import com.shoppingbe.shoppingbe.entity.Product;
-import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 public interface ProductService {
@@ -14,4 +16,7 @@ public interface ProductService {
     List<Product> getAllSlug(String slug) throws Exception;
 
     List<Product> getProductsByCategory(String category) throws Exception;
+
+    Page<Product> findAllWithSpecification(String name, String category, String price, String rating,
+                                           PageRequest pageRequest) throws UnsupportedEncodingException;
 }

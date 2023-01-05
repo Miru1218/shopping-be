@@ -51,8 +51,10 @@ public class ProductController {
     @Operation(summary = "Get Products By Category")
     @GetMapping(value = "/products/search")
     @ResponseBody
-    public ResponseEntity<Map<String, Object>> getProductsByCategory(@RequestParam(value = "category") String category) throws Exception {
-        Map<String, Object> result = productFacade.getProductsByCategory(category);
+    public ResponseEntity<Map<String, Object>> getProductsByCategory(@RequestParam(value = "page") String page,
+                                                                     @RequestParam(value = "query") String name,
+                                                                     @RequestParam(value = "category") String category, @RequestParam(value = "price") String price, @RequestParam(value = "rating") String rating, @RequestParam(value = "order") String order) throws Exception {
+        Map<String, Object> result = productFacade.getProductsByCategory(page, name, category, price, rating, order);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }

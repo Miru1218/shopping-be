@@ -2,6 +2,9 @@ package com.shoppingbe.shoppingbe.facade;
 
 import com.shoppingbe.shoppingbe.entity.Product;
 import com.shoppingbe.shoppingbe.service.ProductService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -31,21 +34,18 @@ public class ProductFacade {
         return allSlug;
     }
 
-    public Map<String, Object> getProductsByCategory(String category) throws Exception {
-        //        List<Product> productList;
-        //        if ("all".equalsIgnoreCase(category)) {
-        //            productList = productService.getAllProducts();
-        //        } else {
-        //            productList = productService.getProductsByCategory
-        //            (category);
-        //        }
-        List<Product> productList = "all".equalsIgnoreCase(category) ? productService.getAllProducts() :
-                productService.getProductsByCategory(category);
+    public Map<String, Object> getProductsByCategory(String page, String name, String category, String price,
+                                                     String rating, String order) throws Exception {
+
+        Sort sort = Sort.by("newest".equalsIgnoreCase(order) ? Sort.Direction.DESC : Sort.Direction.ASC, "id");
+        PageRequest pageRequest = PageRequest.of(Integer.parseInt(page), 3, sort);
+        Page<Product> productPage = productService.findAllWithSpecification(name, category, price, rating, pageRequest);
+        List<Product> productList = productPage.getContent();
 
         Map<String, Object> result = new HashMap<>();
         result.put("countProduct", productList.size());
-        result.put("page", "1");
-        result.put("pages", 1);
+        result.put("page", page);
+        result.put("pages", productPage.getTotalPages());
         result.put("products", productList);
         return result;
     }
