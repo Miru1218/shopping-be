@@ -48,8 +48,8 @@ public class UserController {
     @PostMapping(value = "/signup", consumes = MediaType.APPLICATION_JSON_VALUE, produces =
             MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<User> signup(@RequestBody String input, HttpServletRequest request) throws Exception {
-        User user = userFacade.signup(input, request);
+    public ResponseEntity<User> signup(@RequestBody User user, HttpServletRequest request) throws Exception {
+        user = userFacade.signup(user, request);
         return new ResponseEntity<>(user, HttpStatus.OK);
 
     }
@@ -93,9 +93,8 @@ public class UserController {
     @PutMapping(value = "/profile", consumes = MediaType.APPLICATION_JSON_VALUE, produces =
             MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<User> editProfile(@RequestBody String input, HttpServletRequest request) throws Exception {
-        JSONObject jsonObject = new JSONObject(input);
-        User user = userFacade.editProfile(jsonObject, request);
+    public ResponseEntity<User> editProfile(@RequestBody User user, HttpServletRequest request) throws Exception {
+        user = userFacade.editProfile(user, request);
         return new ResponseEntity<>(user, HttpStatus.OK);
 
     }

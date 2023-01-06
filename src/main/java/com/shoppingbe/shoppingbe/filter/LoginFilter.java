@@ -1,6 +1,5 @@
 package com.shoppingbe.shoppingbe.filter;
 
-import com.google.gson.Gson;
 import com.shoppingbe.shoppingbe.entity.User;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -38,7 +37,7 @@ public class LoginFilter implements Filter {
 
         // 已登入
         if (user != null) {
-            System.out.println(new Gson().toJson(user));
+//            System.out.println(new Gson().toJson(user));
             chain.doFilter(request, response);
         }
         // 未登入

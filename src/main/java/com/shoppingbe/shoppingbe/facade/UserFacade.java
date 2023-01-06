@@ -2,7 +2,6 @@ package com.shoppingbe.shoppingbe.facade;
 
 import com.shoppingbe.shoppingbe.entity.User;
 import com.shoppingbe.shoppingbe.service.UserService;
-import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,8 +14,8 @@ public class UserFacade {
         this.userService = userService;
     }
 
-    public User signup(String input, HttpServletRequest request) throws Exception {
-        User user = userService.signup(input, request);
+    public User signup(User user, HttpServletRequest request) throws Exception {
+        user = userService.signup(user, request);
         return user;
     }
 
@@ -25,8 +24,8 @@ public class UserFacade {
         return user;
     }
 
-    public User editProfile(JSONObject input, HttpServletRequest request) throws Exception {
-        User user = userService.editProfile(input, request);
+    public User editProfile(User newUser, HttpServletRequest request) throws Exception {
+        User user = userService.editProfile(newUser, request);
         return user;
     }
 
