@@ -4,12 +4,13 @@ import com.shoppingbe.shoppingbe.entity.OrderMain;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.UUID;
 
 public interface OrderService {
 
-    OrderMain getOrderMainByOrderId(int orderId) throws Exception;
+    OrderMain getOrderMainByOrderId(UUID orderId) throws Exception;
 
-    OrderMain saveOrderMain(OrderMain order, HttpServletRequest rq) throws Exception;
+    void saveOrderMain(OrderMain order, HttpServletRequest rq) throws Exception;
 
     OrderMain setupShippingAddress(OrderMain order) throws Exception;
 

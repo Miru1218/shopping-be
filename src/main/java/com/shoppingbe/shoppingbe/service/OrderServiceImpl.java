@@ -28,7 +28,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderMain getOrderMainByOrderId(int orderId) throws Exception {
+    public OrderMain getOrderMainByOrderId(UUID orderId) throws Exception {
         OrderMain order = new OrderMain();
         Optional<OrderMain> orderMainOptional = orderMainDao.findById(orderId);
         if (orderMainOptional.isPresent()) {
@@ -38,13 +38,12 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderMain saveOrderMain(OrderMain order, HttpServletRequest rq) throws Exception {
+    public void saveOrderMain(OrderMain order, HttpServletRequest rq) throws Exception {
         HttpSession session = rq.getSession();
         User user = (User) session.getAttribute("UserSession");
         order.setCreatedAt(new Date());
         order.setUserId(user.getId());
         order = orderMainDao.save(order);
-        return order;
     }
 
     @Override

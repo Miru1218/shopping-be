@@ -1,13 +1,11 @@
 package com.shoppingbe.shoppingbe.controller;
 
-import com.shoppingbe.shoppingbe.entity.OrderDetail;
 import com.shoppingbe.shoppingbe.entity.User;
 import com.shoppingbe.shoppingbe.facade.UserFacade;
 import com.shoppingbe.shoppingbe.repository.OrderDetailDao;
 import com.shoppingbe.shoppingbe.repository.UserDao;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -15,8 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.Comparator;
-import java.util.List;
 
 @RestController
 @RequestMapping("/user")
@@ -28,21 +24,6 @@ public class UserController {
     OrderDetailDao orderDetailDao;
     @Resource
     UserFacade userFacade;
-
-    @Operation(summary = "TEST")
-    @GetMapping(value = "/test", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public void test() {
-        List<OrderDetail> orderDetails = orderDetailDao.findByOrderId(10);
-        orderDetails.sort(Comparator.comparing(OrderDetail::getId));
-        for (OrderDetail o : orderDetails) {
-            System.out.println(o.getId());
-        }
-        orderDetails.sort(Comparator.comparing(OrderDetail::getId).reversed());
-        for (OrderDetail o : orderDetails) {
-            System.out.println(o.getId());
-        }
-    }
 
     @Operation(summary = "註冊")
     @PostMapping(value = "/signup", consumes = MediaType.APPLICATION_JSON_VALUE, produces =

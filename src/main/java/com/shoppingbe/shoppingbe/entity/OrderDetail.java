@@ -3,8 +3,11 @@ package com.shoppingbe.shoppingbe.entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
+import java.util.UUID;
 
 //@Entity的Bean是告訴Spring這是數據模型層的宣告
 @Entity
@@ -20,7 +23,10 @@ public class OrderDetail {
     @Column(name = "id")
     private int id;
     @Column(name = "order_id")
-    private int orderId;
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+    @Type(type = "org.hibernate.type.UUIDCharType")
+    private UUID orderId;
     @Column(name = "product_id")
     private int productId;
     @Column(name = "qty")

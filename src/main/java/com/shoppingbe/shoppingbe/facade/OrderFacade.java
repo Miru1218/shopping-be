@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class OrderFacade {
@@ -19,9 +20,9 @@ public class OrderFacade {
     }
 
 
-    public OrderMain getOrderDetail(int orderId) throws Exception {
+    public OrderMain getOrderDetail(UUID orderId) throws Exception {
         OrderMain order = orderService.getOrderMainByOrderId(orderId);
-        if(orderId== order.getId()) {
+        if(orderId.toString().equalsIgnoreCase(order.getId().toString())) {
             orderService.setupShippingAddress(order);
             orderService.setupOrderItems(order);
         }
@@ -29,7 +30,8 @@ public class OrderFacade {
     }
 
     public OrderMain saveOrder(OrderMain order, HttpServletRequest rq) throws Exception {
-        order = orderService.saveOrderMain(order,rq);
+        order.setId(UUID.randomUUID());
+        orderService.saveOrderMain(order,rq);
         orderService.saveOrderDetails(order);
         orderService.saveShippingAddress(order);
         System.out.println("測試資料    " + new Gson().toJson(order));

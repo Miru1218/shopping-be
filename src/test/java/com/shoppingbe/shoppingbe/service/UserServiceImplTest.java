@@ -81,6 +81,7 @@ class UserServiceImplTest {
         verify(userDao, times(1)).findByAccount(eq("lulu3"));
         verify(httpSession, times(0)).setAttribute(anyString(), any());
         Assertions.assertFalse(result.isLoginPass());
+
     }
 
     @Test
@@ -101,29 +102,43 @@ class UserServiceImplTest {
 
 
     @Test
-    void editProfile_test_update_account_success() throws Exception {
+    void editProfile_test_update_success() throws Exception {
         User newUser = new User();
-        newUser.setAccount("lulu3");
-        newUser.setEmail("hungche0701@gmail.com");
-        newUser.setPhone("0907494170");
-        newUser.setPassword("4");
+        newUser.setAccount("lulu2");
+        newUser.setEmail("2@2.com");
+        newUser.setPhone("222");
+        newUser.setPassword("2");
         User userFromDB = new User();
         userFromDB.setAccount("lulu3");
         userFromDB.setPassword("3");
         when(httpServletRequest.getSession()).thenReturn(httpSession);
         when(httpSession.getAttribute(anyString())).thenReturn(userFromDB);
-        when(userDao.save(any(User.class))).thenReturn(newUser);
-        doNothing().when(httpSession).setAttribute(anyString(),any(User.class));
-        User result = userService.editProfile(newUser,httpServletRequest);
+        when(userDao.save(userCaptor.capture())).thenReturn(newUser);
+        doNothing().when(httpSession).setAttribute(anyString(), any(User.class));
+        userService.editProfile(newUser, httpServletRequest);
 
-        Assertions.assertEquals(newUser.getAccount(),result.getAccount());
-        Assertions.assertEquals(newUser.getEmail(),result.getEmail());
-        Assertions.assertEquals(newUser.getPassword(),result.getPassword());
-        Assertions.assertEquals(newUser.getPhone(),result.getPhone());
+        Assertions.assertEquals("lulu2", userCaptor.getValue().getAccount());
+        Assertions.assertEquals("2@2.com", userCaptor.getValue().getEmail());
+        Assertions.assertEquals("2", userCaptor.getValue().getPassword());
+        Assertions.assertEquals("222", userCaptor.getValue().getPhone());
 
     }
 
     @Test
-    void editProfile_test_fail() throws Exception {
+    void editProfile_test_update_password_success() throws Exception {
+        User newUser = new User();
+        newUser.setAccount("lulu3");
+        newUser.setPassword("2");
+        User userFromDB = new User();
+        userFromDB.setAccount("lulu3");
+        userFromDB.setPassword("3");
+        when(httpServletRequest.getSession()).thenReturn(httpSession);
+        when(httpSession.getAttribute(anyString())).thenReturn(userFromDB);
+        when(userDao.save(userCaptor.capture())).thenReturn(newUser);
+        doNothing().when(httpSession).setAttribute(anyString(), any(User.class));
+        userService.editProfile(newUser, httpServletRequest);
+        Assertions.assertEquals("lulu3", userCaptor.getValue().getAccount());
+        Assertions.assertEquals("2", userCaptor.getValue().getPassword());
     }
+
 }

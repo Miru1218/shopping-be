@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/order")
@@ -46,9 +47,9 @@ public class OrderController {
     @Operation(summary = "訂單內容")
     @GetMapping(value = "/{orderId}")
     @ResponseBody
-    public ResponseEntity<OrderMain> getOrderDetail(@PathVariable("orderId") Integer id) throws Exception {
-        OrderMain order = orderFacade.getOrderDetail(id);
-        HttpStatus status = id != order.getId() ? HttpStatus.NOT_FOUND : HttpStatus.OK;
+    public ResponseEntity<OrderMain> getOrderDetail(@PathVariable("orderId") String id) throws Exception {
+        OrderMain order = orderFacade.getOrderDetail(UUID.fromString(id));
+        HttpStatus status = id.equalsIgnoreCase(order.getId().toString()) ? HttpStatus.OK : HttpStatus.NOT_FOUND;
         return new ResponseEntity<>(order, status);
     }
 
