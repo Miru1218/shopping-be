@@ -3,7 +3,6 @@ package com.shoppingbe.shoppingbe.entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
@@ -23,8 +22,6 @@ public class OrderDetail {
     @Column(name = "id")
     private int id;
     @Column(name = "order_id")
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     @Type(type = "org.hibernate.type.UUIDCharType")
     private UUID orderId;
     @Column(name = "product_id")

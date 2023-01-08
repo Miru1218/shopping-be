@@ -24,7 +24,7 @@ public class LoginFilter implements Filter {
         HttpSession session = req.getSession();
         User user = (User) session.getAttribute("UserSession");
         String uri = new String(req.getRequestURI());
-        System.out.println("uri:" + uri);
+//        System.out.println("uri:" + uri);
 
         //放行URI
         List<String> allowUris = Arrays.asList("/user/signup", "/product/products");
