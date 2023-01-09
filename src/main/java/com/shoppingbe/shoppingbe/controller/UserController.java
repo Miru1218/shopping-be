@@ -35,32 +35,6 @@ public class UserController {
 
     }
 
-    //    @Operation(summary = "登入")
-    //    @PostMapping(value = "/signIn", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType
-    //    .APPLICATION_JSON_VALUE)
-    //    @ResponseBody
-    ////    使用boolean來設定初始狀態
-    //    public boolean signIn(@RequestBody String input, HttpServletRequest request) {
-    //        System.out.println(input);
-    ////        設定為沒有登入
-    //        boolean result = false;
-    ////        獲得前端輸入的資料
-    //        JSONObject jsonObject = new JSONObject(input);
-    ////        從前端獲得的資料拿出 account 和 password
-    //        String account = jsonObject.getString("account");
-    //        String password = jsonObject.getString("password");
-    ////        從 DB 拿取 符合account 的 User 資料
-    //        User user = userDao.findByAccount(account);
-    ////        判斷 DB 有沒有這筆 account && 判斷輸入的密碼與資料庫是否正確
-    //        if (user != null && password.equals(user.getPassword()))
-    //            result = true;
-    //        if (result) {
-    //            HttpSession session = request.getSession();
-    //            session.setAttribute("UserSession", user);
-    //        }
-    //        return result;
-    //    }
-
     @Operation(summary = "登入")
     @PostMapping(value = "/signIn", consumes = MediaType.APPLICATION_JSON_VALUE, produces =
             MediaType.APPLICATION_JSON_VALUE)
@@ -79,6 +53,4 @@ public class UserController {
         return new ResponseEntity<>(user, HttpStatus.OK);
 
     }
-
-
 }
