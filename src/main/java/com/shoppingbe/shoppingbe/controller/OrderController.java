@@ -60,4 +60,12 @@ public class OrderController {
         List<OrderMain> orderList = orderFacade.getHistoryOrders(rq);
         return new ResponseEntity<>(orderList, HttpStatus.OK);
     }
+
+    @Operation(summary = "paypal")
+    @GetMapping(value = "/keys/paypal")
+    @ResponseBody
+    public ResponseEntity<List<OrderMain>> getPaypalApi(HttpServletRequest rq) throws Exception {
+        List<OrderMain> orderList = orderFacade.getHistoryOrders(rq);
+        return new ResponseEntity<>(orderList, HttpStatus.OK);
+    }
 }
