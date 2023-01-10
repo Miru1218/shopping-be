@@ -14,11 +14,13 @@ public interface OrderService {
 
     OrderMain setupShippingAddress(OrderMain order) throws Exception;
 
-    void saveShippingAddress(OrderMain order)throws Exception;
+    void saveShippingAddress(OrderMain order) throws Exception;
 
     OrderMain setupOrderItems(OrderMain order) throws Exception;
 
-    void saveOrderDetails(OrderMain order)throws Exception;
+    void saveOrderDetails(OrderMain order) throws Exception;
 
     List<OrderMain> findOrderMainsByUserId(int userId) throws Exception;
+
+    OrderMain setupPay(OrderMain order) throws Exception;
 }

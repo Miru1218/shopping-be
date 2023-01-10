@@ -38,11 +38,9 @@ public class OrderMain {
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
     @Column(name = "delivered_at")
-    @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     private Date deliveredAt;
     @Column(name = "paid_at")
-    @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     private Date paidAt;
     @Column(name = "isDelivered")

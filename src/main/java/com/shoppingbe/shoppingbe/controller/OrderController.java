@@ -1,6 +1,7 @@
 package com.shoppingbe.shoppingbe.controller;
 
 
+import com.google.gson.Gson;
 import com.shoppingbe.shoppingbe.entity.OrderMain;
 import com.shoppingbe.shoppingbe.facade.OrderFacade;
 import com.shoppingbe.shoppingbe.repository.OrderDetailDao;
@@ -9,6 +10,7 @@ import com.shoppingbe.shoppingbe.repository.ProductDao;
 import com.shoppingbe.shoppingbe.repository.ShippingAddressDao;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -33,6 +36,9 @@ public class OrderController {
     ShippingAddressDao shippingAddressDao;
     @Resource(name = "orderFacade")
     OrderFacade orderFacade;
+
+    @Value("${paypal.client.id}")
+    private String paypalClientId;
 
     //    透過 @Operation 標記，可以對 API 進行簡介
     @Operation(summary = "下訂單")
@@ -64,8 +70,16 @@ public class OrderController {
     @Operation(summary = "paypal")
     @GetMapping(value = "/keys/paypal")
     @ResponseBody
-    public ResponseEntity<List<OrderMain>> getPaypalApi(HttpServletRequest rq) throws Exception {
-        List<OrderMain> orderList = orderFacade.getHistoryOrders(rq);
-        return new ResponseEntity<>(orderList, HttpStatus.OK);
+    public ResponseEntity<String> getPaypalApi() throws Exception {
+        return new ResponseEntity<>(paypalClientId, HttpStatus.OK);
+    }
+
+    @Operation(summary = "paypal")
+    @PutMapping(value = "/{orderId}/pay")
+    @ResponseBody
+    public ResponseEntity<OrderMain> putPay(@PathVariable("orderId") String id) throws Exception {
+        OrderMain order = orderFacade.getOrderDetail(UUID.fromString(id));
+        order = orderFacade.setupPay(order);
+        return new ResponseEntity<>(order, HttpStatus.OK);
     }
 }

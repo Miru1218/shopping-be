@@ -22,7 +22,7 @@ public class OrderFacade {
 
     public OrderMain getOrderDetail(UUID orderId) throws Exception {
         OrderMain order = orderService.getOrderMainByOrderId(orderId);
-        if(orderId.toString().equalsIgnoreCase(order.getId().toString())) {
+        if (orderId.toString().equalsIgnoreCase(order.getId().toString())) {
             orderService.setupShippingAddress(order);
             orderService.setupOrderItems(order);
         }
@@ -31,17 +31,23 @@ public class OrderFacade {
 
     public OrderMain saveOrder(OrderMain order, HttpServletRequest rq) throws Exception {
         order.setId(UUID.randomUUID());
-        orderService.saveOrderMain(order,rq);
+        orderService.saveOrderMain(order, rq);
         orderService.saveOrderDetails(order);
         orderService.saveShippingAddress(order);
-        System.out.println("測試資料    " + new Gson().toJson(order));
+        //        System.out.println("測試資料    " + new Gson().toJson(order));
         return order;
     }
 
-    public List<OrderMain> getHistoryOrders(HttpServletRequest rq) throws Exception{
+    public List<OrderMain> getHistoryOrders(HttpServletRequest rq) throws Exception {
         HttpSession session = rq.getSession();
-        User user = (User)session.getAttribute("UserSession");
+        User user = (User) session.getAttribute("UserSession");
         List<OrderMain> orderList = orderService.findOrderMainsByUserId(user.getId());
         return orderList;
+    }
+
+    public OrderMain setupPay(OrderMain order) throws Exception {
+        order = orderService.setupPay(order);
+        return order;
+
     }
 }

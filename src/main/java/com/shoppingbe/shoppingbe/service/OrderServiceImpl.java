@@ -43,14 +43,14 @@ public class OrderServiceImpl implements OrderService {
         User user = (User) session.getAttribute("UserSession");
         order.setCreatedAt(new Date());
         order.setUserId(user.getId());
-        order = orderMainDao.save(order);
+        //        System.out.println(new Gson().toJson(order));
+        orderMainDao.save(order);
     }
 
     @Override
     public OrderMain setupShippingAddress(OrderMain order) throws Exception {
         List<ShippingAddress> shippingAddressList = shippingAddressDao.findByOrderId(order.getId());
         ShippingAddress shippingAddress = shippingAddressList.get(0);
-        //            order.setDelivered(true);
         order.setShippingAddress(shippingAddress);
         return order;
     }
@@ -108,5 +108,13 @@ public class OrderServiceImpl implements OrderService {
     public List<OrderMain> findOrderMainsByUserId(int userId) throws Exception {
         List<OrderMain> orderMainList = orderMainDao.findByUserId(userId);
         return orderMainList;
+    }
+
+    public OrderMain setupPay(OrderMain order) throws Exception {
+        order.setPaid(true);
+        order.setPaidAt(new Date());
+        //        System.out.println(new Gson().toJson(order));
+        order = orderMainDao.save(order);
+        return order;
     }
 }
