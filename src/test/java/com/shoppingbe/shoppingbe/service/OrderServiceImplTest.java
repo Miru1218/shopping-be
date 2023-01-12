@@ -1,12 +1,11 @@
 package com.shoppingbe.shoppingbe.service;
 
-import com.shoppingbe.shoppingbe.entity.OrderDetail;
-import com.shoppingbe.shoppingbe.entity.OrderMain;
-import com.shoppingbe.shoppingbe.entity.ShippingAddress;
-import com.shoppingbe.shoppingbe.entity.User;
+import com.shoppingbe.shoppingbe.entity.*;
 import com.shoppingbe.shoppingbe.repository.OrderDetailDao;
 import com.shoppingbe.shoppingbe.repository.OrderMainDao;
+import com.shoppingbe.shoppingbe.repository.ProductDao;
 import com.shoppingbe.shoppingbe.repository.ShippingAddressDao;
+import org.assertj.core.internal.bytebuddy.dynamic.DynamicType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,8 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.Date;
-import java.util.UUID;
+import java.util.*;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -39,10 +37,15 @@ class OrderServiceImplTest {
     OrderDetailDao orderDetailDao;
     @Mock
     ShippingAddressDao shippingAddressDao;
+    @Mock
+    ProductDao productDao;
     @Captor
     ArgumentCaptor<OrderMain> orderCaptor;
     @Captor
+    ArgumentCaptor<OrderDetail> orderDetailArgumentCaptor;
+    @Captor
     ArgumentCaptor<ShippingAddress> shippingAddressArgumentCaptor;
+
 
     @Test
     void saveOrderMain() throws Exception {
@@ -72,13 +75,75 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void setupOrderItems() {
+    void setupOrderItems() throws Exception {
+        OrderMain orderMain = new OrderMain();
+        orderMain.setId(UUID.fromString("f16bd549-1eed-42bc-95e3-e986f4189f5f"));
+        List<OrderDetail> orderDetails = new ArrayList<>();
+        OrderDetail orderDetail = new OrderDetail();
+        orderDetail.setProductId(0);
+        orderDetail.setPrice(100);
+        orderDetail.setQty(10);
+        orderDetails.add(orderDetail);
+        Product product = new Product();
+        product.setName("name");
+        product.setSlug("slug");
+        product.setImage("image");
+        Optional<Product> productOptional = Optional.of(product);
+        when(productDao.findById(anyInt())).thenReturn(productOptional);
+        when(orderDetailDao.findByOrderId(any(UUID.class))).thenReturn(orderDetails);
 
+        OrderMain order = orderService.setupOrderItems(orderMain);
 
+        Assertions.assertEquals("name", product.getName());
+        Assertions.assertEquals("slug", product.getSlug());
+        Assertions.assertEquals("image", product.getImage());
+        Assertions.assertEquals(100, orderDetail.getPrice());
+        Assertions.assertEquals(10, orderDetail.getQty());
+
+        verify(orderDetailDao, times(1)).findByOrderId(any(UUID.class));
+        verify(productDao, times(1)).findById(anyInt());
     }
 
     @Test
-    void saveOrderDetails() {
+    void saveOrderDetails() throws Exception {
+        OrderMain orderMain = new OrderMain();
+        List<Product> orderItems = new ArrayList<>();
+        Product productFromFrontend = new Product();
+        orderItems.add(productFromFrontend);
+        productFromFrontend.setId(1);
+        productFromFrontend.setName("旗袍");
+        productFromFrontend.setSlug("旗袍");
+        productFromFrontend.setCategory("旗袍");
+        productFromFrontend.setImage("/images/p1.jpg");
+        productFromFrontend.setPrice(120);
+        productFromFrontend.setCountInStock(10);
+        productFromFrontend.setBrand("adidas");
+        productFromFrontend.setRating(4.5);
+        productFromFrontend.setNumReviews(2);
+        productFromFrontend.setDescription("旗袍");
+        productFromFrontend.setQuantity(1);
+        orderMain.setOrderItems(orderItems);
+        orderMain.setId(UUID.fromString("f16bd549-1eed-42bc-95e3-e986f4189f5f"));
+        Product product = new Product();
+        product.setId(1);
+        product.setPrice(100);
+        Optional<Product> optional = Optional.of(product);
+        when(productDao.findById(anyInt())).thenReturn(optional);
+        OrderDetail orderDetail = new OrderDetail();
+        orderDetail.setTaxPrice(115);
+        orderDetail.setTotalPrice(215);
+        when(orderDetailDao.save(orderDetailArgumentCaptor.capture())).thenReturn(orderDetail);
+        orderService.saveOrderDetails(orderMain);
+        Assertions.assertEquals("f16bd549-1eed-42bc-95e3-e986f4189f5f",
+                orderDetailArgumentCaptor.getValue().getOrderId().toString());
+        Assertions.assertEquals(1, orderDetailArgumentCaptor.getValue().getProductId());
+        Assertions.assertEquals(1, orderDetailArgumentCaptor.getValue().getQty());
+        Assertions.assertEquals(100, orderDetailArgumentCaptor.getValue().getPrice());
+        Assertions.assertEquals(15, orderDetailArgumentCaptor.getValue().getTaxPrice());
+        Assertions.assertEquals(115, orderDetailArgumentCaptor.getValue().getTotalPrice());
+        verify(productDao, times(1)).findById(anyInt());
+        verify(orderDetailDao, times(1)).save(any(OrderDetail.class));
+
     }
 
     @Test
