@@ -6,6 +6,7 @@ import lombok.Setter;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.UUID;
 
 //@Entity的Bean是告訴Spring這是數據模型層的宣告
@@ -34,4 +35,9 @@ public class OrderDetail {
     private double taxPrice;
     @Column(name = "total_price")
     private double totalPrice;
+    @Column(name = "cancel_qty")
+    private int cancelQty;
+    @Column(name = "cancel_at")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date cancelAt;
 }
