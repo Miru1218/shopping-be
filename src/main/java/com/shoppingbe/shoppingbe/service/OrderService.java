@@ -23,4 +23,6 @@ public interface OrderService {
     List<OrderMain> findOrderMainsByUserId(int userId) throws Exception;
 
     OrderMain setupPay(OrderMain order) throws Exception;
+
+    OrderMain setupCancelItems(UUID orderId) throws Exception;
 }

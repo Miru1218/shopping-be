@@ -1,5 +1,6 @@
 package com.shoppingbe.shoppingbe.service;
 
+import com.google.gson.Gson;
 import com.shoppingbe.shoppingbe.entity.*;
 import com.shoppingbe.shoppingbe.repository.OrderDetailDao;
 import com.shoppingbe.shoppingbe.repository.OrderMainDao;
@@ -151,8 +152,23 @@ class OrderServiceImplTest {
         OrderMain orderMain = new OrderMain();
         when(orderMainDao.save(orderCaptor.capture())).thenReturn(orderMain);
         orderService.setupPay(orderMain);
-        Assertions.assertTrue(orderCaptor.getValue().isPaid());
+        Assertions.assertTrue(orderCaptor.getValue().getIsPaid());
+        Assertions.assertTrue(new Date().getTime() > orderCaptor.getValue().getPaidAt().getTime());
         verify(orderMainDao, times(1)).save(any(OrderMain.class));
-        Assertions.assertTrue(new Date().getTime() > orderCaptor.getValue().getCreatedAt().getTime());
     }
+
+    @Test
+    void setupCancelItems() throws Exception {
+        OrderMain orderMain = new OrderMain();
+        Optional<OrderMain> cancelOptional = Optional.of(orderMain);
+        when(orderMainDao.findById(any(UUID.class))).thenReturn(cancelOptional);
+        when(orderMainDao.save(orderCaptor.capture())).thenReturn(orderMain);
+        orderService.setupCancelItems(UUID.fromString("1c269b97-7f68-4a9e-85f4-8b778c1c6800"));
+
+        Assertions.assertTrue(orderCaptor.getValue().getIsCancel());
+        Assertions.assertTrue(new Date().getTime() > orderCaptor.getValue().getCancelAt().getTime());
+        verify(orderMainDao,times(1)).save(any(OrderMain.class));
+        verify(orderMainDao,times(1)).findById(any(UUID.class));
+    }
+
 }

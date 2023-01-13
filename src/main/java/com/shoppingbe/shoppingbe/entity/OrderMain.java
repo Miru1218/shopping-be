@@ -23,7 +23,7 @@ public class OrderMain {
     private UUID id;
     @Column(name = "items_price")
     private int itemsPrice;
-    @Column(name = "payment_method",columnDefinition = "text")
+    @Column(name = "payment_method", columnDefinition = "text")
     private String paymentMethod;
     @Column(name = "shipping_price")
     private double shippingPrice;
@@ -43,14 +43,19 @@ public class OrderMain {
     @Column(name = "paid_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date paidAt;
-    @Column(name = "isDelivered")
-    private boolean isDelivered;
-    @Column(name = "isPaid")
-    private boolean isPaid;
+    @Column(name = "is_delivered")
+    private Boolean isDelivered;
+    @Column(name = "is_paid")
+    private Boolean isPaid;
     @Transient
     private List<Product> orderItems;
     @Transient
     private ShippingAddress shippingAddress;
     @Transient
     private String userAccount;
+    @Column(name = "cancel_at")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date cancelAt;
+    @Column(name = "is_cancel")
+    private Boolean isCancel;
 }

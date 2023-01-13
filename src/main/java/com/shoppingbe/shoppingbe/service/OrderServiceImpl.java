@@ -1,6 +1,5 @@
 package com.shoppingbe.shoppingbe.service;
 
-import com.google.gson.Gson;
 import com.shoppingbe.shoppingbe.entity.*;
 import com.shoppingbe.shoppingbe.repository.*;
 import org.springframework.stereotype.Service;
@@ -112,10 +111,20 @@ public class OrderServiceImpl implements OrderService {
     }
 
     public OrderMain setupPay(OrderMain order) throws Exception {
-        order.setPaid(true);
+        order.setIsPaid(true);
         order.setPaidAt(new Date());
         //        System.out.println(new Gson().toJson(order));
         order = orderMainDao.save(order);
         return order;
+    }
+
+    @Override
+    public OrderMain setupCancelItems(UUID orderId) throws Exception {
+        Optional<OrderMain> cancelOptional = orderMainDao.findById(orderId);
+        OrderMain orderMain = cancelOptional.get();
+        orderMain.setIsCancel(true);
+        orderMain.setCancelAt(new Date());
+        orderMainDao.save(orderMain);
+        return orderMain;
     }
 }

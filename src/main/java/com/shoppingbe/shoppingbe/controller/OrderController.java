@@ -2,6 +2,7 @@ package com.shoppingbe.shoppingbe.controller;
 
 
 import com.google.gson.Gson;
+import com.shoppingbe.shoppingbe.entity.OrderDetail;
 import com.shoppingbe.shoppingbe.entity.OrderMain;
 import com.shoppingbe.shoppingbe.facade.OrderFacade;
 import com.shoppingbe.shoppingbe.repository.OrderDetailDao;
@@ -20,6 +21,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -74,7 +76,7 @@ public class OrderController {
         return new ResponseEntity<>(paypalClientId, HttpStatus.OK);
     }
 
-    @Operation(summary = "paypal")
+    @Operation(summary = "OrderPaypal")
     @PutMapping(value = "/{orderId}/pay")
     @ResponseBody
     public ResponseEntity<OrderMain> putPay(@PathVariable("orderId") String id) throws Exception {
@@ -82,4 +84,30 @@ public class OrderController {
         order = orderFacade.setupPay(order);
         return new ResponseEntity<>(order, HttpStatus.OK);
     }
+
+    @Operation(summary = "Cancel")
+    @DeleteMapping(value = "/cancel/{orderId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<OrderMain> orderCancel(@PathVariable("orderId") String id) throws Exception {
+        //        Optional<OrderMain> cancelOptional = orderMainDao.findById(UUID.fromString(id));
+        OrderMain orderMain = orderFacade.orderCancel(UUID.fromString(id));
+        return new ResponseEntity<>(orderMain, HttpStatus.OK);
+    }
+
+    @Operation(summary = "CancelSingle")
+    @DeleteMapping(value = "/cancel/{orderId}/single", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<OrderDetail> orderCancelSingle(@PathVariable("orderId") String id) throws Exception {
+        List<OrderDetail> orderDetails = orderDetailDao.findByOrderId(UUID.fromString(id));
+
+        System.out.println("=========================");
+        System.out.println(new Gson().toJson(orderDetails));
+        System.out.println("=========================");
+
+
+
+
+        return null;
+    }
+
 }

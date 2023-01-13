@@ -19,16 +19,17 @@ import java.util.List;
 @Order(value = 1)
 public class LoginFilter implements Filter {
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws ServletException, IOException {
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws ServletException
+            , IOException {
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse res = (HttpServletResponse) response;
         HttpSession session = req.getSession();
         User user = (User) session.getAttribute("UserSession");
         String uri = new String(req.getRequestURI());
-//        System.out.println("uri:" + uri);
+        //        System.out.println("uri:" + uri);
 
         //放行URI
-        List<String> allowUris = Arrays.asList("/user/signup", "/product/products");
+        List<String> allowUris = Arrays.asList("/user/signup", "/user/signIn", "/product/products");
 
         // 放行所有靜態檔案
         if (uri.contains("/css") || uri.contains("/images") || uri.contains("/js")) {
@@ -38,13 +39,15 @@ public class LoginFilter implements Filter {
 
         // 已登入
         if (user != null) {
-//            System.out.println(new Gson().toJson(user));
+            //            System.out.println(new Gson().toJson(user));
+            chain.doFilter(request, response);
+        } else if (uri.toLowerCase().startsWith("/order/cancel/")) {
             chain.doFilter(request, response);
         }
         // 未登入
         else {
             if (allowUris.contains(uri)) {
-            chain.doFilter(request, response);
+                chain.doFilter(request, response);
             } else {
                 res.setStatus(HttpStatus.UNAUTHORIZED.value());
             }

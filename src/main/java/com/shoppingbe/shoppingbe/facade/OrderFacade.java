@@ -48,6 +48,10 @@ public class OrderFacade {
     public OrderMain setupPay(OrderMain order) throws Exception {
         order = orderService.setupPay(order);
         return order;
+    }
 
+    public OrderMain orderCancel(UUID orderId) throws Exception {
+        OrderMain order = orderService.setupCancelItems(orderId);
+        return order;
     }
 }
