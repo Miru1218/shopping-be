@@ -25,4 +25,6 @@ public interface OrderService {
     OrderMain setupPay(OrderMain order) throws Exception;
 
     OrderMain setupCancelItems(UUID orderId) throws Exception;
+
+    OrderMain setupCancelSingle(OrderMain order) throws Exception;
 }

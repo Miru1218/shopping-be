@@ -4,6 +4,7 @@ package com.shoppingbe.shoppingbe.controller;
 import com.google.gson.Gson;
 import com.shoppingbe.shoppingbe.entity.OrderDetail;
 import com.shoppingbe.shoppingbe.entity.OrderMain;
+import com.shoppingbe.shoppingbe.entity.Product;
 import com.shoppingbe.shoppingbe.facade.OrderFacade;
 import com.shoppingbe.shoppingbe.repository.OrderDetailDao;
 import com.shoppingbe.shoppingbe.repository.OrderMainDao;
@@ -48,7 +49,9 @@ public class OrderController {
             MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<OrderMain> order(@RequestBody OrderMain order, HttpServletRequest rq) throws Exception {
+
         order = orderFacade.saveOrder(order, rq);
+        System.out.println(new Gson().toJson(order));
         return new ResponseEntity<>(order, HttpStatus.OK);
     }
 
@@ -95,19 +98,12 @@ public class OrderController {
     }
 
     @Operation(summary = "CancelSingle")
-    @DeleteMapping(value = "/cancel/{orderId}/single", produces = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(value = "/cancel", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<OrderDetail> orderCancelSingle(@PathVariable("orderId") String id) throws Exception {
-        List<OrderDetail> orderDetails = orderDetailDao.findByOrderId(UUID.fromString(id));
+    public ResponseEntity<OrderMain> orderCancelSingle(@RequestBody OrderMain order) throws Exception {
+        OrderMain orderMain = orderFacade.orderCancelSingle(order);
+        return new ResponseEntity<>(orderMain, HttpStatus.OK);
 
-        System.out.println("=========================");
-        System.out.println(new Gson().toJson(orderDetails));
-        System.out.println("=========================");
-
-
-
-
-        return null;
     }
 
 }

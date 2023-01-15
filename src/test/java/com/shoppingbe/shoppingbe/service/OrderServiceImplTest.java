@@ -167,8 +167,33 @@ class OrderServiceImplTest {
 
         Assertions.assertTrue(orderCaptor.getValue().getIsCancel());
         Assertions.assertTrue(new Date().getTime() > orderCaptor.getValue().getCancelAt().getTime());
-        verify(orderMainDao,times(1)).save(any(OrderMain.class));
-        verify(orderMainDao,times(1)).findById(any(UUID.class));
+        verify(orderMainDao, times(1)).save(any(OrderMain.class));
+        verify(orderMainDao, times(1)).findById(any(UUID.class));
     }
 
+    @Test
+    void setupCancelSingle() throws Exception {
+        int sum = 0;
+        OrderMain orderMain = new OrderMain();
+        orderMain.setId(UUID.fromString("138d37ae-b769-4d5d-b592-e7c152fd5a9e"));
+        List<Product> orderItems = new ArrayList<>();
+        Product product = new Product();
+        product.setId(3);
+        product.setQuantity(1);
+        orderItems.add(product);
+        orderMain.setOrderItems(orderItems);
+        List<OrderDetail> orderDetails = new ArrayList<>();
+        OrderDetail orderDetail = new OrderDetail();
+        orderDetail.setQty(10);
+        orderDetail.setCancelQty(orderDetail.getQty() - product.getQuantity());
+        orderDetail.setPrice(130);
+        orderDetails.add(orderDetail);
+        when(orderDetailDao.findByOrderIdAndProductId(any(UUID.class), anyInt())).thenReturn(orderDetails);
+        when(orderDetailDao.save(orderDetailArgumentCaptor.capture())).thenReturn(orderDetail);
+        Optional<OrderMain> orderMainOption = Optional.of(orderMain);
+        when(orderMainDao.findById(any(UUID.class))).thenReturn(orderMainOption);
+        when(orderMainDao.save(orderCaptor.capture())).thenReturn(orderMain);
+
+        orderService.setupCancelSingle(orderMain);
+    }
 }

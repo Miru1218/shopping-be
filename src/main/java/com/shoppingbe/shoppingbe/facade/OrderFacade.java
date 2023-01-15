@@ -1,6 +1,7 @@
 package com.shoppingbe.shoppingbe.facade;
 
 import com.google.gson.Gson;
+import com.shoppingbe.shoppingbe.entity.OrderDetail;
 import com.shoppingbe.shoppingbe.entity.OrderMain;
 import com.shoppingbe.shoppingbe.entity.User;
 import com.shoppingbe.shoppingbe.service.OrderService;
@@ -18,7 +19,6 @@ public class OrderFacade {
     public OrderFacade(OrderService orderService) {
         this.orderService = orderService;
     }
-
 
     public OrderMain getOrderDetail(UUID orderId) throws Exception {
         OrderMain order = orderService.getOrderMainByOrderId(orderId);
@@ -53,5 +53,10 @@ public class OrderFacade {
     public OrderMain orderCancel(UUID orderId) throws Exception {
         OrderMain order = orderService.setupCancelItems(orderId);
         return order;
+    }
+
+    public OrderMain orderCancelSingle(OrderMain order) throws Exception {
+        OrderMain orderMain = orderService.setupCancelSingle(order);
+        return orderMain;
     }
 }

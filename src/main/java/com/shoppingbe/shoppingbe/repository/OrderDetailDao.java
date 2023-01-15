@@ -12,4 +12,6 @@ import java.util.UUID;
 //接口继承于 CrudRepository 接口，拥有CrudRepository 接口的所有方法， 并新增两个功能：分页和排序。
 public interface OrderDetailDao extends PagingAndSortingRepository<OrderDetail, UUID> {
     List<OrderDetail> findByOrderId(UUID orderId);
+
+    List<OrderDetail> findByOrderIdAndProductId(UUID orderId,Integer productId);
 }

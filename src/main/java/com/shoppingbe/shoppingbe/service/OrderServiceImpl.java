@@ -127,4 +127,26 @@ public class OrderServiceImpl implements OrderService {
         orderMainDao.save(orderMain);
         return orderMain;
     }
+
+    public  OrderMain  setupCancelSingle(OrderMain order) throws Exception {
+        int sum = 0;
+        for (Product product : order.getOrderItems()) {
+            List<OrderDetail> orderDetails = orderDetailDao.findByOrderIdAndProductId(order.getId(), product.getId());
+            OrderDetail orderDetail = orderDetails.get(0);
+            if (product.getQuantity() != orderDetail.getQty()) {
+                orderDetail.setCancelQty(orderDetail.getQty() - product.getQuantity());
+                orderDetail.setCancelAt(new Date());
+                orderDetailDao.save(orderDetail);
+                sum += (orderDetail.getPrice() * orderDetail.getQty());
+            }
+        }
+        Optional<OrderMain> orderMainOption = orderMainDao.findById(order.getId());
+        OrderMain orderMain = orderMainOption.get();
+        orderMain.setItemsPrice(sum);
+        double tax = sum * 0.15;
+        orderMain.setTaxPrice(tax);
+        orderMain.setTotalPrice(sum + tax);
+        orderMainDao.save(orderMain);
+        return orderMain;
+    }
 }
