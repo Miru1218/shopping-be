@@ -1,12 +1,10 @@
 package com.shoppingbe.shoppingbe.service;
 
-import com.google.gson.Gson;
 import com.shoppingbe.shoppingbe.entity.*;
 import com.shoppingbe.shoppingbe.repository.OrderDetailDao;
 import com.shoppingbe.shoppingbe.repository.OrderMainDao;
 import com.shoppingbe.shoppingbe.repository.ProductDao;
 import com.shoppingbe.shoppingbe.repository.ShippingAddressDao;
-import org.assertj.core.internal.bytebuddy.dynamic.DynamicType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -56,11 +54,13 @@ class OrderServiceImplTest {
         user.setId(1);
         when(httpSession.getAttribute(anyString())).thenReturn(user);
         when(orderMainDao.save(orderCaptor.capture())).thenReturn(new OrderMain());
+
         orderService.saveOrderMain(orderMain, httpServletRequest);
+
         Assertions.assertEquals(1, orderCaptor.getValue().getUserId());
+        Assertions.assertTrue(new Date().getTime() > orderCaptor.getValue().getCreatedAt().getTime());
         verify(orderMainDao, times(1)).save(any(OrderMain.class));
         verify(httpSession, times(1)).getAttribute(anyString());
-        Assertions.assertTrue(new Date().getTime() > orderCaptor.getValue().getCreatedAt().getTime());
     }
 
     @Test
@@ -69,7 +69,9 @@ class OrderServiceImplTest {
         orderMain.setShippingAddress(new ShippingAddress());
         orderMain.setId(UUID.fromString("f16bd549-1eed-42bc-95e3-e986f4189f5f"));
         when(shippingAddressDao.save(shippingAddressArgumentCaptor.capture())).thenReturn(new ShippingAddress());
+
         orderService.saveShippingAddress(orderMain);
+
         Assertions.assertEquals("f16bd549-1eed-42bc-95e3-e986f4189f5f",
                 shippingAddressArgumentCaptor.getValue().getOrderId().toString());
         verify(shippingAddressDao, times(1)).save(any(ShippingAddress.class));
@@ -93,7 +95,7 @@ class OrderServiceImplTest {
         when(productDao.findById(anyInt())).thenReturn(productOptional);
         when(orderDetailDao.findByOrderId(any(UUID.class))).thenReturn(orderDetails);
 
-        OrderMain order = orderService.setupOrderItems(orderMain);
+        orderService.setupOrderItems(orderMain);
 
         Assertions.assertEquals("name", product.getName());
         Assertions.assertEquals("slug", product.getSlug());
@@ -134,7 +136,9 @@ class OrderServiceImplTest {
         orderDetail.setTaxPrice(115);
         orderDetail.setTotalPrice(215);
         when(orderDetailDao.save(orderDetailArgumentCaptor.capture())).thenReturn(orderDetail);
+
         orderService.saveOrderDetails(orderMain);
+
         Assertions.assertEquals("f16bd549-1eed-42bc-95e3-e986f4189f5f",
                 orderDetailArgumentCaptor.getValue().getOrderId().toString());
         Assertions.assertEquals(1, orderDetailArgumentCaptor.getValue().getProductId());
@@ -173,7 +177,6 @@ class OrderServiceImplTest {
 
     @Test
     void setupCancelSingle() throws Exception {
-        int sum = 0;
         OrderMain orderMain = new OrderMain();
         orderMain.setId(UUID.fromString("138d37ae-b769-4d5d-b592-e7c152fd5a9e"));
         List<Product> orderItems = new ArrayList<>();
@@ -195,5 +198,16 @@ class OrderServiceImplTest {
         when(orderMainDao.save(orderCaptor.capture())).thenReturn(orderMain);
 
         orderService.setupCancelSingle(orderMain);
+
+//        Assertions.assertEquals("138d37ae-b769-4d5d-b592-e7c152fd5a9e",
+//                orderCaptor.getValue().getId().toString());
+        Assertions.assertEquals(9, orderDetailArgumentCaptor.getValue().getCancelQty());
+        Assertions.assertTrue(new Date().getTime() > orderDetailArgumentCaptor.getValue().getCancelAt().getTime());
+        verify(orderDetailDao, times(1)).save(any(OrderDetail.class));
+        Assertions.assertEquals(1300, orderCaptor.getValue().getItemsPrice());
+        Assertions.assertEquals(195, orderCaptor.getValue().getTaxPrice());
+        Assertions.assertEquals(1495, orderCaptor.getValue().getTotalPrice());
+        verify(orderMainDao, times(1)).save(any(OrderMain.class));
+
     }
 }
