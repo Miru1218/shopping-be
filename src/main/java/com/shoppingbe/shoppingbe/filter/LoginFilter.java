@@ -29,7 +29,7 @@ public class LoginFilter implements Filter {
         //        System.out.println("uri:" + uri);
 
         //放行URI
-        List<String> allowUris = Arrays.asList("/user/signup", "/user/signIn", "/product/products","/order/cancel");
+        List<String> allowUris = Arrays.asList("/user/signup", "/user/signIn", "/product/products","/order/cancel","/product/products/categories");
 
         // 放行所有靜態檔案
         if (uri.contains("/css") || uri.contains("/images") || uri.contains("/js")) {
